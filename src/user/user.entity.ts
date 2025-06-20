@@ -5,7 +5,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  BeforeInsert,
 } from 'typeorm';
+import * as bcrypt from 'bcryptjs';
 
 @Entity('users') // Specify table name as 'users'
 export class User {
@@ -17,6 +19,21 @@ export class User {
 
   @Column({ unique: true })
   email: string;
+
+  @Column({ select: false }) // 'select: false' empêche le mot de passe d'être retourné par défaut dans les requêtes
+  password: string;
+
+    /**
+   * Hook exécuté automatiquement avant l'insertion d'un nouvel enregistrement.
+   * Il sert à hacher le mot de passe s'il a été fourni.
+   */
+  @BeforeInsert()
+  async hashPassword() {
+    if (this.password) {
+      const salt = await bcrypt.genSalt();
+      this.password = await bcrypt.hash(this.password, salt);
+    }
+  }
 
   @Column({ default: true })
   isActive: boolean;

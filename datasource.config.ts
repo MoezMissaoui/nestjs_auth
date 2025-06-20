@@ -19,7 +19,7 @@ export const dataSourceOptions: DataSourceOptions = {
   migrations: ['dist/db/migrations/*.js'],
   
   // Vous pouvez désactiver la synchronisation si vous gérez tout via les migrations
-  synchronize: false, 
+  synchronize: true, 
 };
 
 const dataSource = new DataSource(dataSourceOptions);

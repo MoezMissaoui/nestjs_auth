@@ -9,7 +9,8 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     super({ usernameField: 'email' }); // On dit à Passport que le "username" est le champ "email"
   }
 
-  async validate(email: string, password: string): Promise<any> {
+  async validate(email: string, password: string): Promise<any> { // Cette méthode est appelée par Passport pour valider l'utilisateur
+    // On utilise le service d'authentification pour valider l'utilisateur
     const user = await this.authService.validateUser(email, password);
     if (!user) {
       throw new UnauthorizedException("Identifiants incorrects");

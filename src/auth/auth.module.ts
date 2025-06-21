@@ -6,14 +6,15 @@ import { UserModule } from './../user/user.module'; // <--- 1. IMPORTEZ UserModu
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { LocalStrategy } from './local.strategy';
+console.log(process.env.JWT_SECRET);
 
 @Module({
   imports: [
     UserModule, // <--- 2. Ajoutez-le aux imports
     PassportModule,
     JwtModule.register({
-      secret: 'VOTRE_SECRET_TRES_SECRET',
-      signOptions: { expiresIn: '60m' },
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: process.env.ACCESS_TOKEN_TTL || '60m' }, // Définit la durée de validité du token
     }),
   ],
   providers: [AuthService, LocalStrategy],

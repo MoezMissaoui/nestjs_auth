@@ -27,9 +27,7 @@ export class AuthService {
    * Crée un token JWT pour un utilisateur validé.
    */
   async login(user: any) {
-    console.log(user);
     const payload = { email: user.email, sub: user.id };
-    
     return {
       access_token: this.jwtService.sign(payload),
       user: user

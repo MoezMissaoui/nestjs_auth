@@ -40,4 +40,27 @@ export class UserService {
     }
     return user;
   }
+
+  async findOneWithCurrentHashedRefreshToken(id: number): Promise<User> {
+    // Cette méthode est utilisée pour récupérer un utilisateur avec son token de rafraîchissement haché.
+    // Elle est utile pour les opérations de rafraîchissement de token.
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.id = :id', { id })
+      .addSelect('user.currentHashedRefreshToken') // Ajoute explicitement le champ 'password' à la sélection
+      .getOne();
+    if (!user) {
+      throw new NotFoundException(`Utilisateur avec l'ID #${id} non trouvé`);
+    }
+    return user;
+  }
+
+  /**
+   * Enregistre un nouvel utilisateur ou met à jour un utilisateur existant.
+   * @param user L'entité User à enregistrer.
+   * @returns L'entité User enregistrée, y compris le mot de passe haché.
+   */
+  async save(user: User): Promise<User> {
+    return this.userRepository.save(user);
+  }
 }

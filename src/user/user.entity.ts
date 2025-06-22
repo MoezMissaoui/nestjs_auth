@@ -38,6 +38,24 @@ export class User {
   @Column({ default: true })
   isActive: boolean;
 
+
+  @Column({ type: 'varchar', nullable: true, select: false })
+  currentHashedRefreshToken?: string | null;
+
+  /**
+   * Met à jour le refresh token haché pour l'utilisateur.
+   * Le hachage est essentiel pour la sécurité en base de données.
+   * @param refreshToken Le token en clair à hacher et stocker.
+   */
+  async setCurrentHashedRefreshToken(refreshToken: string | null) {
+    if (!refreshToken) {
+      this.currentHashedRefreshToken = null;
+      return;
+    }
+    const salt = await bcrypt.genSalt();
+    this.currentHashedRefreshToken = await bcrypt.hash(refreshToken, salt);
+  }
+
   // --- TIMESTAMPS & SOFT DELETE ---
 
   /**

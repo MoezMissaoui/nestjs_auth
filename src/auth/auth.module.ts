@@ -5,19 +5,22 @@ import { AuthController } from './auth.controller';
 import { UserModule } from './../user/user.module'; // <--- 1. IMPORTEZ UserModule
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { LocalStrategy } from './local.strategy';
-console.log(process.env.JWT_SECRET);
+import { LocalStrategy } from './strategies/local.strategy';
+import { JwtStrategy } from './strategies/jwt.strategy';
+import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
 
 @Module({
   imports: [
-    UserModule, // <--- 2. Ajoutez-le aux imports
+    UserModule,
     PassportModule,
-    JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: process.env.ACCESS_TOKEN_TTL || '60m' }, // Définit la durée de validité du token
-    }),
+    JwtModule.register({}), // On le laisse vide, la config se fera dans le service
   ],
-  providers: [AuthService, LocalStrategy],
+  providers: [
+    AuthService, 
+    LocalStrategy,
+    JwtStrategy,
+    JwtRefreshStrategy,
+  ],
   controllers: [AuthController],
 })
 export class AuthModule {}

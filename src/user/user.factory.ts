@@ -1,4 +1,3 @@
-// src/user/user.factory.ts
 import { faker } from '@faker-js/faker';
 import { User } from './user.entity';
 

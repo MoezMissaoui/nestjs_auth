@@ -1,0 +1,16 @@
+# Use the full Node.js image, not Alpine, as it can have better compatibility with some packages during development.
+FROM node:20
+
+# Set the working directory
+WORKDIR /usr/src/app
+
+# Copy package files and install ALL dependencies (including dev)
+# This is cached, so it only re-runs if your package.json changes.
+COPY package.json package-lock.json* ./
+RUN npm ci
+
+# This is just a placeholder. The docker-compose file will mount the actual source code.
+COPY . .
+
+# The default command to run the NestJS development server with watch mode
+CMD ["npm", "run", "start:nodemon"]

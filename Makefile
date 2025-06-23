@@ -1,8 +1,14 @@
 # Makefile for managing the local development Docker environment.
 # It uses the development-specific compose file.
 COMPOSE_FILE := -f docker-compose.dev.yml
+DOCKER_APP_CONTAINER := nstau_app_dev
 
 # --- Primary Commands ---
+
+# Start a shell in the main application container.
+# This is useful for running commands directly in the app environment.
+shell:
+	docker-compose $(COMPOSE_FILE) exec $(DOCKER_APP_CONTAINER) bash
 
 # Build images and start all services in detached mode.
 # Use this for the first time or after changing the Dockerfile.

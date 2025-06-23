@@ -6,13 +6,24 @@ import {
   Request,
   HttpCode,
   HttpStatus,
+  Body,
+  ValidationPipe
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
+import { RegisterDto } from './dto/register.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
+
+  @Post('register')
+  @HttpCode(HttpStatus.CREATED)
+  async register(@Body(new ValidationPipe()) registerDto: RegisterDto) {
+    console.log('Registering user:', registerDto);
+    
+    return this.authService.register(registerDto);
+  }
 
   @UseGuards(AuthGuard('local')) // Ce guard va déclencher la LocalStrategy
   @Post('login')

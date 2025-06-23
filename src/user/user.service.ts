@@ -63,4 +63,14 @@ export class UserService {
   async save(user: User): Promise<User> {
     return this.userRepository.save(user);
   }
+
+  /**
+   * Crée un nouvel utilisateur avec les données fournies.
+   * @param data Les données de l'utilisateur à créer.
+   * @returns L'entité User créée.
+   */
+  async create(data: Partial<User>): Promise<User> {
+    const user = this.userRepository.create(data);
+    return this.userRepository.save(user);
+  }
 }

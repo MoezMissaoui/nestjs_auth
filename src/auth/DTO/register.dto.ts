@@ -1,4 +1,5 @@
-import { IsBoolean, IsEmail, IsNotEmpty, IsOptional, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, MinLength } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class RegisterDto {
 
@@ -15,6 +16,6 @@ export class RegisterDto {
 
     
     @IsOptional()
-    @IsBoolean()
-    isActive: boolean;
+    @Transform(({ value }) => value === 1 || value === 0)
+    isActive?: boolean;
 }

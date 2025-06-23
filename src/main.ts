@@ -2,14 +2,22 @@ import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { log } from 'console';
-import { ValidationPipe, UnprocessableEntityException } from '@nestjs/common';
+import {
+  ValidationPipe,
+  UnprocessableEntityException,
+  RequestMethod,
+} from '@nestjs/common';
 
 async function bootstrap() {
   log('Starting NestJS auth application...');
 
   const app = await NestFactory.create(AppModule);
   // Ajoute le préfixe '/api' à toutes les routes
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix('api', {
+    exclude: [
+      { path: '', method: RequestMethod.ALL }, // root path
+    ],
+  });
 
   app.useGlobalPipes(
     new ValidationPipe({

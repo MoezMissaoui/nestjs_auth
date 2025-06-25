@@ -1,0 +1,54 @@
+# .github/workflows/sonarcloud.yml
+name: SonarCloud Scan
+
+on:
+  push:
+    branches:
+      - main # ou master, develop, etc.
+      - develop # ou master, develop, etc.
+  pull_request:
+    branches:
+      - main # ou master, develop, etc.
+      - develop # ou master, develop, etc.
+    types: [opened, synchronize, reopened] # Lancer l'analyse quand une PR est ouverte ou mise à jour
+
+jobs:
+  sonarcloud:
+    runs-on: ubuntu-latest # Environnement d'exécution pour l'Action
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4 # Récupère votre code
+        with:
+          fetch-depth: 0 # Nécessaire pour l'analyse de la dette technique par SonarCloud
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18' # Utilisez la version de Node.js de votre projet
+
+      - name: Install dependencies
+        run: npm ci # 'npm ci' est plus fiable pour la CI que 'npm install'
+
+      - name: Run tests and generate coverage
+        run: npm test -- --coverage --testResultsProcessor="jest-junit" # Lance les tests, génère la couverture LCOV et le rapport JUnit XML
+
+      - name: Build NestJS application (if necessary for static assets/dist analysis)
+        run: npm run build # Exécutez votre script de build NestJS si SonarQube doit analyser le dossier `dist`
+        # Si vous analysez uniquement le dossier `src` (ce qui est généralement le cas pour JS/TS), cette étape n'est pas strictement nécessaire pour SonarCloud lui-même.
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master # Utilise l'action officielle SonarCloud
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Fourni automatiquement par GitHub Actions
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} # Le secret que vous avez créé
+        with:
+          # Les propriétés suivantes peuvent être définies ici ou dans sonar-project.properties
+          # Il est souvent préférable de les mettre dans sonar-project.properties pour la consistance.
+          # args: >
+          #   -Dsonar.projectKey=mon-organisation_mon-projet
+          #   -Dsonar.organization=mon-organisation
+          #   -Dsonar.sources=src
+          #   -Dsonar.tests=test
+          #   -Dsonar.exclusions=**/*.d.ts,**/*.js,**/*.js.map,node_modules/**,dist/**,coverage/**,.git/**
+          #   -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+          #   -Dsonar.javascript.tests.reportPaths=test-results/jest-junit.xml

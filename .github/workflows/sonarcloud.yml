@@ -37,7 +37,7 @@ jobs:
         # Si vous analysez uniquement le dossier `src` (ce qui est généralement le cas pour JS/TS), cette étape n'est pas strictement nécessaire pour SonarCloud lui-même.
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master # Utilise l'action officielle SonarCloud
+        uses: SonarSource/sonarqube-scan-action@v5.0.0 # Utilise l'action officielle SonarCloud
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Fourni automatiquement par GitHub Actions
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} # Le secret que vous avez créé

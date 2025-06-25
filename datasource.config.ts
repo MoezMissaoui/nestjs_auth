@@ -7,8 +7,8 @@ dotenv.config();
 
 export const dataSourceOptions: DataSourceOptions = {
   type: 'mysql', // ou 'postgres', 'sqlite', etc.
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT || '3306', 10),
+  host: process.env.DB_HOST ?? 'localhost',
+  port: parseInt(process.env.DB_PORT ?? '3306', 10),
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,

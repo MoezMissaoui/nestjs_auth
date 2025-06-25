@@ -1,0 +1,76 @@
+services:
+  nstau_app_dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev # We point to our new development Dockerfile
+    container_name: nstau_app_dev
+    ports:
+      - '${NEST_APP_PORT}:3000'
+    env_file:
+      - .env
+    environment:
+      - DB_HOST=nstau_db_dev
+      - DB_PORT=3306
+      - DB_USERNAME=root
+      - DB_PASSWORD=nestpassword
+      - DB_DATABASE=nestdb
+    volumes:
+      # Mount your local source code into the container
+      - .:/usr/src/app
+      # Use a named volume to "mask" the node_modules directory.
+      # This prevents your local node_modules from overwriting the one in the container.
+      - /usr/src/app/node_modules
+    depends_on:
+      nstau_db_dev:
+        condition: service_healthy
+
+  nstau_seeder_dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev # The dev image already has all dependencies needed for seeding
+    container_name: nstau_seeder_dev
+    depends_on:
+      nstau_db_dev:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      - DB_HOST=nstau_db_dev
+      - DB_PORT=3306
+      - DB_USERNAME=root
+      - DB_PASSWORD=nestpassword
+      - DB_DATABASE=nestdb
+    command: ["npm", "run", "seed"] # Run the seed script
+
+  nstau_db_dev:
+    image: mysql:8.0
+    container_name: nstau_db_dev
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: nestpassword
+      MYSQL_DATABASE: nestdb
+    ports:
+      - '${MYSQL_PORT}:3306'
+    volumes:
+      - nstau_db_data_dev:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  nstau_phpmyadmin_dev:
+    image: phpmyadmin/phpmyadmin
+    container_name: nstau_phpmyadmin_dev
+    restart: unless-stopped
+    environment:
+      PMA_HOST: nstau_db_dev
+      PMA_USER: root
+      PMA_PASSWORD: nestpassword
+    ports:
+      - '${PHPMYADMIN_PORT}:80'
+    depends_on:
+      - nstau_db_dev
+
+volumes:
+  nstau_db_data_dev:

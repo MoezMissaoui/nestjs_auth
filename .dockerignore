@@ -1,0 +1,18 @@
+# Dependency directories
+node_modules
+dist
+coverage
+
+# Docker files
+Dockerfile
+.dockerignore
+
+# Git files
+.git
+.gitignore
+
+# Environment variables file
+.env
+
+# Log files
+npm-debug.log*

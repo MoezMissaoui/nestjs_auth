@@ -1,0 +1,65 @@
+services:
+  nstau_app:
+    build:
+      context: .
+      target: production
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - '${NEST_APP_PORT}:3000'
+    depends_on:
+      nstau_db:
+        condition: service_healthy
+    environment:
+      - DB_HOST=nstau_db
+      - DB_PORT=3306
+      - DB_USERNAME=root
+      - DB_PASSWORD=nestpassword
+      - DB_DATABASE=nestdb
+
+  nstau_seeder:
+    build:
+      context: .
+      target: seeder
+    depends_on:
+      nstau_db:
+        condition: service_healthy
+    environment:
+      - DB_HOST=nstau_db
+      - DB_PORT=3306
+      - DB_USERNAME=root
+      - DB_PASSWORD=nestpassword
+      - DB_DATABASE=nestdb
+    command: ["npm", "run", "seed"]
+
+  nstau_db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: nestpassword
+      MYSQL_DATABASE: nestdb
+    ports:
+      - '${MYSQL_PORT}:3306'
+    volumes:
+      - nstau_db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  nstau_phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: nstau_db
+      PMA_USER: root
+      PMA_PASSWORD: nestpassword
+    ports:
+      - '${PHPMYADMIN_PORT}:80'
+    depends_on:
+      - nstau_db
+
+volumes:
+  nstau_db_data:

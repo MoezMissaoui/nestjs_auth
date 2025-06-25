@@ -7,6 +7,7 @@ import {
   UnprocessableEntityException,
   RequestMethod,
 } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   log('Starting NestJS auth application...');
@@ -39,6 +40,19 @@ async function bootstrap() {
       },
     }),
   );
+
+  // Enhanced Swagger configuration
+  const config = new DocumentBuilder()
+    .setTitle('Nest Auth API')
+    .setDescription('Comprehensive API documentation for the NestJS Auth service.')
+    .setVersion('1.0')
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+      'JWT-auth', // This name can be referenced in @ApiBearerAuth()
+    )
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document);
 
   await app.listen(process.env.PORT ?? 3000);
 }

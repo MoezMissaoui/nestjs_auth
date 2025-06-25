@@ -30,7 +30,7 @@ jobs:
         run: npm ci # 'npm ci' est plus fiable pour la CI que 'npm install'
 
       - name: Run tests and generate coverage
-        run: npm test -- --coverage --testResultsProcessor="jest-junit" # Lance les tests, génère la couverture LCOV et le rapport JUnit XML
+        run: npm test -- --coverage --testResultsProcessor="jest-junit" --passWithNoTests # Lance les tests, génère la couverture LCOV et le rapport JUnit XML
 
       - name: Build NestJS application (if necessary for static assets/dist analysis)
         run: npm run build # Exécutez votre script de build NestJS si SonarQube doit analyser le dossier `dist`

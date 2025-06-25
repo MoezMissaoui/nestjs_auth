@@ -42,13 +42,3 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Fourni automatiquement par GitHub Actions
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} # Le secret que vous avez créé
         with:
-          # Les propriétés suivantes peuvent être définies ici ou dans sonar-project.properties
-          # Il est souvent préférable de les mettre dans sonar-project.properties pour la consistance.
-          # args: >
-          #   -Dsonar.projectKey=mon-organisation_mon-projet
-          #   -Dsonar.organization=mon-organisation
-          #   -Dsonar.sources=src
-          #   -Dsonar.tests=test
-          #   -Dsonar.exclusions=**/*.d.ts,**/*.js,**/*.js.map,node_modules/**,dist/**,coverage/**,.git/**
-          #   -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-          #   -Dsonar.javascript.tests.reportPaths=test-results/jest-junit.xml
